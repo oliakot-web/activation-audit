@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keystone — Research Compilation</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg-elevated: #161b22;
+    --bg-card: #1c2128;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --accent: #6ee7b7;
+    --accent-soft: rgba(110, 231, 183, 0.12);
+    --link: #79c0ff;
+    --warn: #f0883e;
+    --crit: #f85149;
+    --good: #6ee7b7;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* Sidebar nav */
+  nav.toc {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 32px 20px;
+    border-right: 1px solid var(--border);
+  }
+
+  nav.toc h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin: 0 0 16px;
+  }
+
+  nav.toc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  nav.toc li { margin-bottom: 8px; }
+
+  nav.toc a {
+    color: var(--text);
+    text-decoration: none;
+    font-size: 14px;
+    display: block;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  nav.toc a:hover {
+    background: var(--bg-card);
+    color: var(--accent);
+  }
+
+  nav.toc .meta {
+    margin-top: 32px;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+  }
+
+  /* Main content */
+  main {
+    padding: 48px 56px 96px;
+    min-width: 0;
+  }
+
+  header.page-header {
+    margin-bottom: 56px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  header.page-header .eyebrow {
+    color: var(--accent);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  header.page-header h1 {
+    font-size: 34px;
+    margin: 0 0 12px;
+    letter-spacing: -0.01em;
+  }
+
+  header.page-header p {
+    color: var(--text-muted);
+    max-width: 70ch;
+    margin: 0;
+    font-size: 15px;
+  }
+
+  section.block {
+    margin-bottom: 72px;
+    scroll-margin-top: 24px;
+  }
+
+  section.block > .section-label {
+    color: var(--accent);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  section.block > h2 {
+    font-size: 26px;
+    margin: 0 0 8px;
+  }
+
+  section.block > .lede {
+    color: var(--text-muted);
+    font-size: 15px;
+    max-width: 75ch;
+    margin: 0 0 28px;
+  }
+
+  h3 {
+    font-size: 18px;
+    margin: 36px 0 12px;
+    color: var(--text);
+  }
+
+  h3:first-of-type { margin-top: 0; }
+
+  p { color: var(--text); font-size: 15px; }
+
+  a { color: var(--link); }
+
+  ul, ol {
+    padding-left: 22px;
+    font-size: 15px;
+  }
+
+  li { margin-bottom: 6px; }
+
+  /* Tables */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 16px 0 28px;
+    background: var(--bg-elevated);
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 13.5px;
+    min-width: 720px;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  th {
+    background: var(--bg-card);
+    color: var(--accent);
+    font-weight: 600;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  td.center, th.center { text-align: center; }
+
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .tag.hard { background: rgba(248,81,73,0.15); color: var(--crit); }
+  .tag.soft { background: rgba(240,136,62,0.15); color: var(--warn); }
+  .tag.aspirational { background: rgba(110,231,183,0.15); color: var(--good); }
+
+  .unverified {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  /* Cards (Patterns section) */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin: 16px 0 28px;
+  }
+
+  .card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+
+  .card h4 {
+    margin: 0 0 10px;
+    font-size: 15px;
+    color: var(--accent);
+  }
+
+  .card dl { margin: 0; font-size: 13.5px; }
+  .card dt {
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    margin-top: 10px;
+  }
+  .card dt:first-child { margin-top: 0; }
+  .card dd { margin: 4px 0 0; }
+
+  /* Callouts */
+  .callout {
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    background: var(--bg-elevated);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 16px 0 28px;
+  }
+
+  .callout.bad { border-left-color: var(--crit); }
+  .callout.secondary { border-left-color: var(--warn); }
+
+  .callout h4 {
+    margin: 0 0 8px;
+    font-size: 15px;
+  }
+
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* Hypothesis list */
+  .hypothesis {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-elevated);
+    padding: 16px 20px;
+    margin-bottom: 14px;
+  }
+
+  .hypothesis .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+    margin-right: 10px;
+  }
+
+  .hypothesis p { margin: 8px 0 0; }
+  .hypothesis .if { color: var(--accent); font-weight: 600; }
+  .hypothesis .then { color: var(--link); font-weight: 600; }
+  .hypothesis .because { color: var(--warn); font-weight: 600; }
+
+  /* Screenshots */
+  .screens-status {
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .screens-status .badge {
+    display: inline-block;
+    background: rgba(240,136,62,0.15);
+    color: var(--warn);
+    border-radius: 999px;
+    padding: 3px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .screens-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .screens-grid figure {
+    margin: 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--bg-elevated);
+  }
+
+  .screens-grid img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .screens-grid figcaption {
+    padding: 8px 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  code {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 0.9em;
+  }
+
+  footer {
+    border-top: 1px solid var(--border);
+    margin-top: 48px;
+    padding-top: 24px;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  @media (max-width: 880px) {
+    .layout { grid-template-columns: 1fr; }
+    nav.toc {
+      position: relative;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+    }
+    main { padding: 32px 24px 64px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <nav class="toc">
+    <h2>Keystone Research</h2>
+    <ul>
+      <li><a href="#competitors">Competitors</a></li>
+      <li><a href="#benchmark">Benchmark</a></li>
+      <li><a href="#patterns">Patterns</a></li>
+      <li><a href="#conclusions">Conclusions</a></li>
+      <li><a href="#screenshots">Screenshots</a></li>
+    </ul>
+    <div class="meta">
+      Compiled from <code>research.md</code><br>
+      Setup → Aha → Habit framework
+    </div>
+  </nav>
+
+  <main>
+    <header class="page-header">
+      <div class="eyebrow">Keystone — Activation Audit</div>
+      <h1>Research Compilation</h1>
+      <p>
+        Notes, findings, and references gathered while researching the onboarding/activation
+        space, competitor products, and the Setup → Aha → Habit framework. Compiled into four
+        sections: Competitors, Benchmark, Patterns, and Conclusions.
+      </p>
+    </header>
+
+    <!-- ===================== COMPETITORS ===================== -->
+    <section class="block" id="competitors">
+      <div class="section-label">01 — Competitors</div>
+      <h2>Competitor Landscape</h2>
+      <p class="lede">
+        Three groups: <strong>HARD</strong> (same product/audience/market),
+        <strong>SOFT</strong> (different product, same job-to-be-done),
+        <strong>ASPIRATIONAL</strong> (best-in-class examples to learn from).
+        The matrix below reflects our own strategic categorization based on each
+        product's public positioning. Specific factual claims about onboarding flows
+        are sourced separately in the Onboarding Comparison table. Cells without a
+        verifiable source are marked <span class="unverified">[?]</span>.
+      </p>
+
+      <h3>Matrix by Group</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Group</th>
+              <th>Type</th>
+              <th>Why in this group</th>
+              <th>What to learn</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Userpilot</strong></td>
+              <td><span class="tag hard">Hard</span></td>
+              <td>Onboarding analytics + in-app guidance platform, used by SaaS PMs/growth teams</td>
+              <td>Directly competes on "onboarding score / benchmark vs. top apps" positioning for the same buyer</td>
+              <td>How they frame an "onboarding score," benchmark language, report structure that resonates with PMs</td>
+              <td><a href="https://userpilot.com/blog/minimum-viable-onboarding/" target="_blank" rel="noopener">Minimum Viable Onboarding</a></td>
+            </tr>
+            <tr>
+              <td><strong>Maze (AI Studio)</strong></td>
+              <td><span class="tag hard">Hard</span></td>
+              <td>UX research platform with AI-generated summaries from usability tests and screens</td>
+              <td>AI-generated UX feedback delivered as a report — closest to our core mechanic</td>
+              <td>How AI insights are presented/framed to build trust, severity labeling, report layout</td>
+              <td class="unverified">[?] not yet sourced</td>
+            </tr>
+            <tr>
+              <td><strong>Attention Insight</strong></td>
+              <td><span class="tag hard">Hard</span></td>
+              <td>AI tool: upload a screenshot, get predicted attention heatmap + analysis</td>
+              <td>Same core input (single screenshot → AI analysis) and self-serve flow</td>
+              <td>Upload UX for single screens, how confidence/limitations of AI output are communicated, pricing model</td>
+              <td class="unverified">[?] not yet sourced</td>
+            </tr>
+            <tr>
+              <td><strong>UXtweak (AI UX Audit)</strong></td>
+              <td><span class="tag hard">Hard</span></td>
+              <td>UX research suite with automated AI audit of designs/screens</td>
+              <td>Automated audit positioning very close to ours</td>
+              <td>How findings are categorized/prioritized, export/report formats</td>
+              <td class="unverified">[?] not yet sourced</td>
+            </tr>
+            <tr>
+              <td><strong>Appcues</strong></td>
+              <td><span class="tag hard">Hard</span></td>
+              <td>Onboarding flow builder with activation analytics &amp; funnel reports</td>
+              <td>Owns "activation" framing for SaaS onboarding, same buyer persona</td>
+              <td>Their activation/funnel definitions, segmentation by user role/goal, drop-off visualization tied to specific screens</td>
+              <td><a href="https://www.appcues.com/blog/product-led-onboarding" target="_blank" rel="noopener">Product-Led Onboarding Guide</a></td>
+            </tr>
+            <tr>
+              <td><strong>Amplitude</strong></td>
+              <td><span class="tag soft">Soft</span></td>
+              <td>Product analytics (event-based activation/retention analysis)</td>
+              <td>Same JTBD via real usage data instead of screenshots</td>
+              <td>"Aha moment" discovery features, stage-based funnel visualization, activation metric definitions</td>
+              <td><a href="https://amplitude.com/blog/4-steps-to-measure-user-onboarding" target="_blank" rel="noopener">4 Steps to Measure User Onboarding</a></td>
+            </tr>
+            <tr>
+              <td><strong>Hotjar / FullStory</strong></td>
+              <td><span class="tag soft">Soft</span></td>
+              <td>Session recording + heatmaps</td>
+              <td>Same JTBD — find onboarding friction — via behavioral signals</td>
+              <td>How "rage clicks"/dead clicks surface as friction, mapping recordings to onboarding steps</td>
+              <td class="unverified">[?] not yet sourced</td>
+            </tr>
+            <tr>
+              <td><strong>UserTesting / Lyssna</strong></td>
+              <td><span class="tag soft">Soft</span></td>
+              <td>Moderated/unmoderated user testing platforms</td>
+              <td>Same JTBD via real human feedback instead of AI</td>
+              <td>Onboarding test scripts, how qualitative findings get synthesized into themes</td>
+              <td class="unverified">[?] not yet sourced</td>
+            </tr>
+            <tr>
+              <td><strong>PostHog</strong></td>
+              <td><span class="tag soft">Soft</span></td>
+              <td>Open-source product analytics + session replay + surveys</td>
+              <td>Same JTBD, dev-friendly audience overlap with early-stage SaaS</td>
+              <td>How they bundle signals into one "understand user behavior" narrative, self-serve onboarding for technical PMs</td>
+              <td><a href="https://posthog.com/blog/how-to-find-and-fix-app-onboarding-drop-off" target="_blank" rel="noopener">How to fix drop-off points</a></td>
+            </tr>
+            <tr>
+              <td><strong>Freelance / agency UX audits</strong><br>(Toptal, boutique studios)</td>
+              <td><span class="tag soft">Soft</span></td>
+              <td>Manual expert "teardown" services</td>
+              <td>Same JTBD, traditional manual delivery — sets the anchor we're disrupting</td>
+              <td>Pricing/turnaround expectations, deliverable structure clients are used to</td>
+              <td class="unverified">[?] not yet sourced</td>
+            </tr>
+            <tr>
+              <td><strong>Google Lighthouse</strong></td>
+              <td><span class="tag aspirational">Aspirational</span></td>
+              <td>Automated audit tool (performance/accessibility/SEO → scores + prioritized fixes)</td>
+              <td>The gold-standard pattern for "automated audit → score + actionable report"</td>
+              <td>Scoring transparency, report UX (severity color-coding, collapsible findings, "how to fix" links), trust-building for automated scores</td>
+              <td class="unverified">[?] not yet sourced</td>
+            </tr>
+            <tr>
+              <td><strong>Baymard Institute</strong></td>
+              <td><span class="tag aspirational">Aspirational</span></td>
+              <td>UX research benchmark institute (ecommerce UX audits &amp; database)</td>
+              <td>Gold standard for evidence-backed, structured UX findings</td>
+              <td>How findings balance "general best practice" vs. "your specific case," premium report structure</td>
+              <td class="unverified">[?] not yet sourced</td>
+            </tr>
+            <tr>
+              <td><strong>Notion / Linear</strong></td>
+              <td><span class="tag aspirational">Aspirational</span></td>
+              <td>Products famous for excellent onboarding UX</td>
+              <td>Concrete reference examples of "good" Setup → Aha → Habit execution</td>
+              <td>Specific patterns (progressive disclosure, personalization, milestone moments) the AI should recognize and cite</td>
+              <td>See Onboarding Comparison sources below</td>
+            </tr>
+            <tr>
+              <td><strong>Stripe / Vercel</strong></td>
+              <td><span class="tag aspirational">Aspirational</span></td>
+              <td>Clean, data-dense yet approachable UI</td>
+              <td>Matches our "clean &amp; clinical" visual direction</td>
+              <td>Visual patterns for presenting metrics/structured data professionally but approachably for non-experts</td>
+              <td>See Onboarding Comparison sources below</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Onboarding Comparison: Setup → Aha → Habit</h3>
+      <p class="lede">
+        Source: web research / public UX teardowns (see sources below). Screenshot
+        capture via Playwright was attempted but blocked by a Node version mismatch
+        on the MCP server — see the <a href="#screenshots">Screenshots</a> section.
+        All rows below are based on written teardowns, not direct visual capture
+        <span class="unverified">[?]</span>.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Audience</th>
+              <th>Core onboarding approach</th>
+              <th>Key activation mechanism</th>
+              <th>Trust-building</th>
+              <th>Monetization</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Notion</strong></td>
+              <td>Knowledge workers, teams, individuals (broad consumer-to-team range)</td>
+              <td>Welcome survey segments by use case ("for me" / "for my team"), then pre-populates workspace with relevant template content</td>
+              <td>"Time to first note/edit" — learn-by-doing checklist teaches slash commands and blocks via a fully functional, pre-filled workspace</td>
+              <td>Familiar templates + visible community (millions of templates/use cases referenced) reduce blank-page anxiety</td>
+              <td>Freemium — generous free tier for individuals, paid plans gated on team size/collaboration features</td>
+            </tr>
+            <tr>
+              <td><strong>Linear</strong></td>
+              <td>Software teams (engineering/product), craft-driven culture</td>
+              <td>"Anti-onboarding" — near-zero setup, no role/permission wizards; pre-populated demo workspace teaches by example</td>
+              <td>First resolved issue within one session; Cmd+K command menu introduced as the primary interaction model from screen one</td>
+              <td>Minimalism itself signals quality/craft ("if the product feels this considered, it'll work well")</td>
+              <td>Freemium — domain-based auto-join drives bottom-up team expansion before paid seats kick in</td>
+            </tr>
+            <tr>
+              <td><strong>Stripe</strong></td>
+              <td>Developers/technical integrators</td>
+              <td>Dashboard + docs split — account setup is fast, but deeper "how to integrate" is pushed out to documentation rather than in-context</td>
+              <td>Test-mode API keys + sandbox let developers make their first API call/charge without real money — value felt before going live</td>
+              <td>Extensive docs, code samples in every major language, sandbox environment build confidence before real transactions</td>
+              <td>Usage-based (per-transaction) — no upfront cost, monetization scales with the customer's own success</td>
+            </tr>
+            <tr>
+              <td><strong>Vercel</strong></td>
+              <td>Developers, especially frontend/framework users</td>
+              <td>Connect GitHub → pick a repo → auto-detected framework/build settings — no "what is a project" explainer needed</td>
+              <td>Live deploy URL within minutes ("first deploy as the celebration") — value = seeing your own app live on the internet</td>
+              <td>Real-time build logs create transparency/control during the "wait" moment; Hobby tier usable indefinitely</td>
+              <td>Freemium — Hobby tier free essentially forever; conversion happens at natural team-collaboration trigger points, not forced</td>
+            </tr>
+            <tr>
+              <td><strong>Userpilot</strong></td>
+              <td>SaaS PMs/growth teams (B2B, often non-technical)</td>
+              <td>Welcome screen collects user goals to segment onboarding; emphasizes "minimum viable onboarding" — only essential steps</td>
+              <td>Activation defined per-customer via funnel analysis; dashboards surface "time to activation" and drop-off points explicitly</td>
+              <td>Heavy use of benchmark data/case studies (e.g. "+47% activation") to build credibility before purchase</td>
+              <td>Subscription SaaS, tiered by MAU/contacts — sales-assisted for larger accounts</td>
+            </tr>
+            <tr>
+              <td><strong>Appcues</strong></td>
+              <td>SaaS PMs/growth teams (B2B)</td>
+              <td>Signup optimized for speed (SSO, minimal fields); welcome modal sets up first "flow" to build immediately</td>
+              <td>Activation defined as a specific in-product action correlated with retention (not just login); their own redesign cited 2.5x activation lift</td>
+              <td>Self-referential case studies (using Appcues to onboard onto Appcues) double as proof-of-product</td>
+              <td>Subscription SaaS, tiered by MAU — free trial leads into sales-assisted upgrade</td>
+            </tr>
+            <tr>
+              <td><strong>Amplitude</strong></td>
+              <td>Data/growth teams, technical and non-technical mixed</td>
+              <td>Long, structured signup (8 screens: email → name → team → role → company → password) before reaching the product</td>
+              <td>Test/demo data lets new users explore funnels and dashboards before their own data is integrated — value felt pre-integration</td>
+              <td>Heavy content marketing on "activation" as a concept — positions Amplitude as the authority defining the term</td>
+              <td>Freemium with usage-based scaling (event volume) — enterprise sales-assisted tier above self-serve</td>
+            </tr>
+            <tr>
+              <td><strong>PostHog</strong></td>
+              <td>Developers/technical founders, self-serve first</td>
+              <td>User picks one product to set up first (analytics, replays, flags, surveys) — onboarding narrows scope rather than overwhelming with the full suite</td>
+              <td>Activation = events ingested + one insight + one dashboard created — concrete, observable "first win"</td>
+              <td>Transparent handbook/docs culture; onboarding team uses docs/AI live on calls rather than guessing — models the self-serve behavior they want from users</td>
+              <td>Usage-based (event volume), generous free tier; sales-assisted only above ~$500/mo forecast</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>3 Shared Patterns</h3>
+      <ol>
+        <li><strong>Segment first, personalize immediately.</strong> Notion, Userpilot, Appcues, and PostHog all ask 1 question (or let the user pick) before showing anything, then tailor the very next screen to that answer — personalization happens <em>before</em> any real product use.</li>
+        <li><strong>The "first win" is engineered, not discovered.</strong> Every product manufactures a fast, visible moment of value (Notion's pre-filled workspace, Linear's first resolved issue, Vercel's live URL, Stripe's sandbox charge, PostHog's first dashboard) — none rely on users stumbling into value organically.</li>
+        <li><strong>Monetization is decoupled from onboarding.</strong> All seven products let users reach their Aha moment, and often well into Habit, on a free/trial tier. None gate the core "prove the value" experience behind payment — paywalls appear at scale/collaboration triggers, not activation triggers.</li>
+      </ol>
+
+      <h3>3 Differences</h3>
+      <ol>
+        <li><strong>Explanation vs. demonstration.</strong> Linear and Vercel deliberately avoid explaining concepts (no "what is a project" screens) and let the interface teach by doing; Amplitude and Userpilot/Appcues lean on more structured, multi-step signup and explicit goal-setting questions.</li>
+        <li><strong>Where the Aha moment lives relative to "real data."</strong> Vercel/Linear/Notion deliver Aha using the user's <em>own</em> content (their repo, their issue, their workspace) within minutes. Amplitude and PostHog often deliver an initial Aha via <em>demo/sample data</em>, with the "real" Aha deferred until the user's own data is integrated — a longer, two-stage activation.</li>
+        <li><strong>Audience sophistication shapes onboarding length.</strong> Developer-first products (Vercel, Stripe, PostHog, Linear) compress or skip setup screens, assuming users can self-orient; PM/business-audience products (Amplitude, Userpilot, Appcues, Notion-for-teams) invest more in explicit questionnaires, segmentation, and guided tours.</li>
+      </ol>
+
+      <h3>Sources</h3>
+      <ul>
+        <li><a href="https://goodux.appcues.com/blog/notions-lightweight-onboarding" target="_blank" rel="noopener">Notion's clever onboarding and inspirational templates</a></li>
+        <li><a href="https://www.candu.ai/blog/how-notion-crafts-a-personalized-onboarding-experience-6-lessons-to-guide-new-users" target="_blank" rel="noopener">How Notion Nails Personalized Onboarding (Teardown)</a></li>
+        <li><a href="https://www.candu.ai/blog/linear-onboarding-teardown" target="_blank" rel="noopener">Linear Onboarding Teardown: How Anti-Onboarding Drives Adoption</a></li>
+        <li><a href="https://www.growthdives.com/p/the-onboarding-linear-built-without" target="_blank" rel="noopener">The onboarding Linear built without any A/B Testing</a></li>
+        <li><a href="https://fmerian.medium.com/delightful-onboarding-experience-the-linear-ftux-cf56f3bc318c" target="_blank" rel="noopener">How Linear welcomes new users</a></li>
+        <li><a href="https://medium.com/design-bootcamp/case-study-user-flow-uncovering-stripe-e58f080043e2" target="_blank" rel="noopener">Case study: User flow uncovering — Stripe</a></li>
+        <li><a href="https://stripe.com/blog/connect-express-onboarding" target="_blank" rel="noopener">A new and improved onboarding flow for Express accounts (Stripe)</a></li>
+        <li><a href="https://getperspective.ai/blog/vercel-ai-native-customer-onboarding-developer-teams" target="_blank" rel="noopener">Vercel's AI-Native Customer Onboarding</a></li>
+        <li><a href="https://pageflows.com/post/desktop-web/onboarding/vercel/" target="_blank" rel="noopener">Vercel Onboarding Flow on Web (Page Flows)</a></li>
+        <li><a href="https://userpilot.com/blog/minimum-viable-onboarding/" target="_blank" rel="noopener">Minimum Viable Onboarding: Your Go-To Guide To User Activation (Userpilot)</a></li>
+        <li><a href="https://userpilot.com/blog/attention-insight-userpilot-case-study/" target="_blank" rel="noopener">+47% User Activation Rate with Userpilot: Attention Insight Case Study</a></li>
+        <li><a href="https://www.appcues.com/blog/we-increased-our-activation-rate-by-2-5x" target="_blank" rel="noopener">We increased our activation rate by 2.5x in just 15 minutes (Appcues)</a></li>
+        <li><a href="https://www.appcues.com/blog/product-led-onboarding" target="_blank" rel="noopener">Product-Led Onboarding: The Complete Guide (Appcues)</a></li>
+        <li><a href="https://amplitude.com/blog/4-steps-to-measure-user-onboarding" target="_blank" rel="noopener">4 Steps to Measure User Onboarding the Right Way (Amplitude)</a></li>
+        <li><a href="https://amplitude.com/docs/get-started/create-a-new-account" target="_blank" rel="noopener">Create a new account | Amplitude Docs</a></li>
+        <li><a href="https://posthog.com/blog/how-to-find-and-fix-app-onboarding-drop-off" target="_blank" rel="noopener">App onboarding: How to fix drop-off points (PostHog)</a></li>
+        <li><a href="https://posthog.com/blog/how-we-built-email-onboarding" target="_blank" rel="noopener">How we built our onboarding email flow (PostHog)</a></li>
+      </ul>
+    </section>
+
+    <!-- ===================== BENCHMARK ===================== -->
+    <section class="block" id="benchmark">
+      <div class="section-label">02 — Benchmark</div>
+      <h2>Clarity of the Aha Moment Before Signup</h2>
+      <p class="lede">
+        Dimension benchmarked: <strong>clarity of the "Aha moment" within the first
+        session, before signup commitment</strong> — directly relevant to Keystone's
+        MVP scope (CLAUDE.md §8: "no login required to run an audit and view/export
+        the report").
+      </p>
+
+      <h3>Evaluation Criteria (1–5 scale)</h3>
+      <ol>
+        <li><strong>Time-to-First-Value (TTFV)</strong> — How quickly (clicks/seconds) does the user reach the core value, unauthenticated?</li>
+        <li><strong>Account-Wall Placement</strong> — How late and how generous is the signup prompt relative to the value delivered? (5 = no wall / very late, 1 = wall before any value)</li>
+        <li><strong>Real vs. Sample Input</strong> — Is the Aha generated from the user's <em>own</em> content/intent, or generic/sample data?</li>
+        <li><strong>Explicit Value Framing</strong> — Does the product label or narrate <em>why</em> this moment matters, or does it leave the user to infer the value themselves?</li>
+        <li><strong>Personalization/Relevance</strong> — Is the Aha tailored to a stated goal, or identical for every visitor?</li>
+        <li><strong>Emotional Impact ("Wow" Factor)</strong> — Does the moment feel surprising, delightful, or impressive in the first session?</li>
+        <li><strong>Reversibility / Low-Stakes Exploration</strong> — Can the user explore freely without fear of losing work, paying, or being locked in?</li>
+        <li><strong>Clarity of Conversion Path</strong> — After the Aha, is it obvious <em>what</em> signing up would add (vs. an abrupt, unexplained wall)?</li>
+      </ol>
+
+      <h3>Scoring Table</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Criterion</th>
+              <th class="center">Duolingo</th>
+              <th class="center">Replit</th>
+              <th class="center">Excalidraw</th>
+              <th class="center">Perplexity</th>
+              <th class="center">ChatGPT</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1. Time-to-First-Value</td><td class="center">5</td><td class="center">3</td><td class="center">5</td><td class="center">5</td><td class="center">5</td></tr>
+            <tr><td>2. Account-Wall Placement</td><td class="center">5</td><td class="center">3</td><td class="center">5</td><td class="center">2</td><td class="center">4</td></tr>
+            <tr><td>3. Real vs. Sample Input</td><td class="center">3</td><td class="center">5</td><td class="center">5</td><td class="center">5</td><td class="center">5</td></tr>
+            <tr><td>4. Explicit Value Framing</td><td class="center">4</td><td class="center">2</td><td class="center">2</td><td class="center">4</td><td class="center">3</td></tr>
+            <tr><td>5. Personalization/Relevance</td><td class="center">4</td><td class="center">2</td><td class="center">1</td><td class="center">5</td><td class="center">5</td></tr>
+            <tr><td>6. Emotional Impact ("Wow")</td><td class="center">4</td><td class="center">3</td><td class="center">2</td><td class="center">4</td><td class="center">5</td></tr>
+            <tr><td>7. Reversibility / Low Stakes</td><td class="center">5</td><td class="center">5</td><td class="center">5</td><td class="center">5</td><td class="center">5</td></tr>
+            <tr><td>8. Clarity of Conversion Path</td><td class="center">4</td><td class="center">2</td><td class="center">2</td><td class="center">2</td><td class="center">3</td></tr>
+            <tr style="font-weight:700;">
+              <td>Total (/40)</td>
+              <td class="center" style="color:var(--accent)">34</td>
+              <td class="center">25</td>
+              <td class="center">27</td>
+              <td class="center">32</td>
+              <td class="center" style="color:var(--accent)">35</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Notes per Product</h3>
+      <ul>
+        <li><strong>Duolingo</strong>: New users set a language/goal, then are dropped straight into a real, scored lesson — registration is optional and full daily learning remains usable unauthenticated. Personalization (language + stated goal) shapes the lesson, and gamified feedback (XP, streak) makes the value of <em>that specific session</em> legible. Weakest spot: lesson content itself is curriculum-driven, not deeply personalized beyond language/level. (<a href="https://goodux.appcues.com/blog/duolingo-user-onboarding" target="_blank" rel="noopener">Appcues</a>, <a href="https://userguiding.com/blog/duolingo-onboarding-ux" target="_blank" rel="noopener">UserGuiding</a>)</li>
+        <li><strong>Replit</strong>: You can write and run real code with zero account, and the "idea → working code in minutes" moment is its signature Aha. But there's almost no framing — a blank IDE doesn't tell a non-technical visitor what just happened or why it matters, and it's unclear what an account adds until you hit a feature wall. (<a href="https://replit.com/" target="_blank" rel="noopener">Replit</a>, <a href="https://blog.replit.com/anon" target="_blank" rel="noopener">Anonymous experience</a>)</li>
+        <li><strong>Excalidraw</strong>: No account exists at all for the core product — the <em>fastest possible</em> TTFV and zero account-wall. But the blank canvas offers no framing, no personalization, and a fairly low "wow" — it assumes the user already knows why a whiteboard is valuable to them. (<a href="https://dev.to/nologintools/excalidraw-free-online-whiteboard-no-login-required-25j5" target="_blank" rel="noopener">DEV Community</a>, <a href="https://plus.excalidraw.com/how-to-start" target="_blank" rel="noopener">How to start drawing</a>)</li>
+        <li><strong>Perplexity</strong>: Delivers a fully real, personalized, well-framed answer (with citations as built-in "evidence of value") on the very first query — but the login wall arrives abruptly after ~3 questions, with little explanation of what an account unlocks, undercutting an otherwise excellent Aha. (<a href="https://community.perplexity.ai/t/login-required-after-3-questions-in-browser-no-chat-without-account/65" target="_blank" rel="noopener">Perplexity Community</a>, <a href="https://www.perplexity.ai/hub/getting-started" target="_blank" rel="noopener">Getting Started</a>)</li>
+        <li><strong>ChatGPT</strong>: Highest "wow" — a real, personalized response to your own prompt, often surprising in quality on the first try, with a generous unauthenticated allowance. Framing is implicit (the answer speaks for itself) and the eventual signup prompt is reasonably clear (save history, more usage). (<a href="https://chatgpt.com/pricing/" target="_blank" rel="noopener">ChatGPT Plans</a>)</li>
+      </ul>
+
+      <h3>Top 3 Mechanisms for Keystone's MVP</h3>
+
+      <div class="callout">
+        <h4>1. Run the full, real Aha unauthenticated — on the user's own input</h4>
+        <p>Like Duolingo/Perplexity/ChatGPT, Keystone should let a first-time visitor upload <em>their actual screenshots</em>, answer the context questions, and receive the <em>complete</em> Setup/Aha/Habit report with real scores and findings — no teaser/blurred version, no signup wall before value. Already in CLAUDE.md scope (§8).</p>
+        <p><strong>Rationale:</strong> the two highest-scoring products (ChatGPT 35/40, Duolingo 34/40) both deliver full real value pre-signup (criterion 3 = 5 and 3 respectively, criterion 7 = 5 for both).</p>
+      </div>
+
+      <div class="callout">
+        <h4>2. Frame the value explicitly</h4>
+        <p>The way Perplexity's citations or Duolingo's XP/streak do. A score and a list of findings aren't self-evidently valuable to a non-expert founder — Keystone should narrate <em>why</em> each score matters and visually anchor findings to the specific screen/moment they relate to (the "evidence" equivalent of a citation).</p>
+        <p><strong>Rationale:</strong> Perplexity (criterion 4 = 4) and Duolingo (criterion 4 = 4) outscore Replit/Excalidraw (criterion 4 = 2 each) on framing — exactly the criterion Keystone's report-based output most needs.</p>
+      </div>
+
+      <div class="callout">
+        <h4>3. Personalize the Aha using the upfront context answers</h4>
+        <p>The way Duolingo tailors the first lesson to the stated language/goal. Keystone's context questionnaire (product description, target user, Setup/Aha/Habit definitions) should visibly shape the report's language and recommendations so the report reads as <em>theirs</em>, not a generic template output.</p>
+        <p><strong>Rationale:</strong> Duolingo, Perplexity, and ChatGPT all score 4–5 on criterion 5 (personalization), while Excalidraw (1/5, fully generic) and Replit (2/5) score lowest.</p>
+      </div>
+
+      <h3>1 Mechanism That Won't Work</h3>
+      <div class="callout bad">
+        <h4>Excalidraw's "blank canvas, zero framing, zero personalization" approach</h4>
+        <p>Excalidraw works because its value (a drawing surface) is self-evident the instant you see it — no explanation needed. Keystone's value (a structured framework-based audit with scores) is <em>not</em> self-evident from an empty upload screen; dropping a first-time, non-UX-expert user straight into "upload your screenshots" with no framing of what they'll get back would score well on TTFV (criterion 1) but fail criteria 4 and 5 (framing and personalization, where Excalidraw scores 2/5 and 1/5 — its two lowest). Some lightweight framing/context-setting before upload is necessary, even if kept minimal.</p>
+      </div>
+    </section>
+
+    <!-- ===================== PATTERNS ===================== -->
+    <section class="block" id="patterns">
+      <div class="section-label">03 — Patterns</div>
+      <h2>Surfacing "Where Onboarding Loses People &amp; Why"</h2>
+      <p class="lede">
+        Core task: help a user/team understand where their onboarding loses people and
+        why. Five fundamentally different UX patterns for surfacing this insight,
+        evaluated for fit against Keystone's MVP.
+      </p>
+
+      <div class="card-grid">
+        <div class="card">
+          <h4>1. Quantitative Funnel / Drop-off Chart</h4>
+          <dl>
+            <dt>How it works</dt>
+            <dd>Visualizes conversion rate at each defined step (stepped bar chart or funnel), highlighting the steps with the biggest % drop.</dd>
+            <dt>Where it applies</dt>
+            <dd>Products with instrumented event analytics (Amplitude, Mixpanel, PostHog funnels).</dd>
+            <dt>When it fits</dt>
+            <dd>Live product with real usage data across many users, prioritizing which step to fix based on volume of impact.</dd>
+            <dt>When it breaks</dt>
+            <dd>Tells you <em>where</em>, not <em>why</em>. Useless without usage telemetry — pre-launch or screenshot-only audits have no funnel to draw.</dd>
+          </dl>
+        </div>
+
+        <div class="card">
+          <h4>2. Annotated Screen-by-Screen Critique</h4>
+          <dl>
+            <dt>How it works</dt>
+            <dd>Walks through each screen in sequence, attaching findings (severity, description, impact, fix) directly to the screen/element where the issue occurs.</dd>
+            <dt>Where it applies</dt>
+            <dd>Design reviews, UX audit tools, AI teardown products (e.g., Maze AI Studio).</dd>
+            <dt>When it fits</dt>
+            <dd>Screenshots/mockups available but no usage data, wanting qualitative, evidence-tied reasoning about why something confuses users.</dd>
+            <dt>When it breaks</dt>
+            <dd>Doesn't quantify how many real users are affected or how severe the impact is — relies on heuristic/expert judgment.</dd>
+          </dl>
+        </div>
+
+        <div class="card">
+          <h4>3. Scorecard / Benchmark Dashboard</h4>
+          <dl>
+            <dt>How it works</dt>
+            <dd>Aggregates findings into a small number of scores (e.g., 0–100 or per-stage), often benchmarked against norms or best-in-class examples.</dd>
+            <dt>Where it applies</dt>
+            <dd>Google Lighthouse, "onboarding score" tools (Userpilot).</dd>
+            <dt>When it fits</dt>
+            <dd>Users want a fast, comparable, trackable metric — good for stakeholder reporting and tracking progress across re-audits.</dd>
+            <dt>When it breaks</dt>
+            <dd>A number alone oversimplifies — without drill-down it doesn't explain why or what to fix, and can feel like a grade rather than guidance.</dd>
+          </dl>
+        </div>
+
+        <div class="card">
+          <h4>4. Attention/Heatmap Overlay</h4>
+          <dl>
+            <dt>How it works</dt>
+            <dd>An AI model predicts where users' eyes/attention land on a screen and overlays a heatmap of noticed vs. ignored elements.</dd>
+            <dt>Where it applies</dt>
+            <dd>Attention Insight, predictive eye-tracking tools — single static screens.</dd>
+            <dt>When it fits</dt>
+            <dd>The question is about visual hierarchy ("is the CTA noticed?") on one screen.</dd>
+            <dt>When it breaks</dt>
+            <dd>Doesn't capture multi-step flow issues or comprehension/motivation problems — purely visual attention.</dd>
+          </dl>
+        </div>
+
+        <div class="card">
+          <h4>5. Session Replay / Behavioral Recording</h4>
+          <dl>
+            <dt>How it works</dt>
+            <dd>Records real user sessions (video/DOM replay) with markers for rage-clicks, hesitation, and exits; the team scrubs real sessions to find friction.</dd>
+            <dt>Where it applies</dt>
+            <dd>Hotjar, FullStory — live products with real traffic.</dd>
+            <dt>When it fits</dt>
+            <dd>Live, instrumented product, wanting ground-truth behavioral evidence.</dd>
+            <dt>When it breaks</dt>
+            <dd>Requires live product + real users + privacy/compliance handling. Pre-launch or screenshot-only contexts can't use it at all.</dd>
+          </dl>
+        </div>
+      </div>
+
+      <h3>Chosen Pattern: #2 — Annotated Screen-by-Screen Critique</h3>
+      <div class="callout">
+        <h4>Why it fits our context</h4>
+        <ol>
+          <li><strong>Input constraint:</strong> Keystone's MVP input is uploaded screenshots only (no live product/telemetry access per CLAUDE.md §5/§9) — of the five, this is the only pattern that works with zero usage data.</li>
+          <li><strong>Already the spec:</strong> CLAUDE.md §7's report structure (severity / description / impact / recommendation, mapped to specific screens) <em>is</em> this pattern — not an alternative to consider, but the one already chosen.</li>
+          <li><strong>Audience fit:</strong> CLAUDE.md §2's non-expert founders/PMs need concrete "why," tied to a screen they recognize — not raw funnel percentages or an attention heatmap they'd have to interpret themselves.</li>
+        </ol>
+      </div>
+
+      <div class="callout secondary">
+        <h4>Second-best, under condition X: #3 — Scorecard/Dashboard</h4>
+        <p><em>Condition X = as a summary layer on top of #2, not as the primary mechanism.</em> CLAUDE.md §4 already specifies four scores (Setup/Aha/Habit/Overall) — this fits well when the user wants an at-a-glance status before drilling into findings, or wants to track progress across re-audits after making fixes. Alone, a score without explanation fails the "why" requirement — but layered over the annotated critique, it's the right complement.</p>
+      </div>
+
+      <div class="callout bad">
+        <h4>Doesn't fit: #1 — Funnel/Drop-off Chart</h4>
+        <p>It requires real usage/event telemetry across many users, which Keystone explicitly lacks by design — no automated capture, no product integration, screenshot-only (CLAUDE.md §5, §9 "out of scope"). Even the documented future direction (URL+login capture) would still be screenshot-based, not event-level data. This pattern measures <em>volume of impact across a user base</em>; Keystone measures the <em>quality/structure of the flow itself</em>. (#5 — session replay — fails for the same root reason.)</p>
+      </div>
+    </section>
+
+    <!-- ===================== CONCLUSIONS ===================== -->
+    <section class="block" id="conclusions">
+      <div class="section-label">04 — Conclusions</div>
+      <h2>Gaps &amp; Hypotheses</h2>
+      <p class="lede">Framed as <strong>if / then / because [data]</strong>.</p>
+
+      <h3>Hypotheses</h3>
+
+      <div class="hypothesis">
+        <p><span class="num">1</span><span class="if">If</span> Keystone delivers the full, real Setup/Aha/Habit report unauthenticated on the user's own uploaded screenshots (no teaser/blur/wall), <span class="then">then</span> more first-time visitors will reach a "useful result" (an activation proxy), <span class="because">because</span> the two highest-scoring products in the pre-signup Aha benchmark — ChatGPT (35/40) and Duolingo (34/40) — both deliver full real value before any signup prompt, while Perplexity's early account-wall (criterion 2 = 2/5) is flagged as undercutting an otherwise strong Aha.</p>
+        <p><a href="#benchmark">→ Benchmark, Scoring Table</a></p>
+      </div>
+
+      <div class="hypothesis">
+        <p><span class="num">2</span><span class="if">If</span> Keystone's report explicitly frames <em>why</em> each score/finding matters and anchors it to a specific screen (citation-style evidence), <span class="then">then</span> non-expert users (founders/PMs per CLAUDE.md §2) will understand and act on findings without needing UX background, <span class="because">because</span> "Explicit Value Framing" (criterion 4) is the dimension where the lowest-scoring products (Replit, Excalidraw — 2/5 each) fail, and a scorecard alone "can feel like a grade without actionable guidance."</p>
+        <p><a href="#patterns">→ Patterns, #3 Scorecard / Benchmark Dashboard — "When it breaks"</a></p>
+      </div>
+
+      <div class="hypothesis">
+        <p><span class="num">3</span><span class="if">If</span> Keystone's context questionnaire (CLAUDE.md §6) visibly shapes the report's language (e.g., echoing the user's own stated Aha/Habit definitions in findings), <span class="then">then</span> the report will feel personalized rather than templated, <span class="because">because</span> Duolingo, Perplexity, and ChatGPT — the three highest scorers on "Personalization/Relevance" (criterion 5, all 4–5/5) — all tailor the first-session output to a stated goal, while the lowest scorer (Excalidraw, 1/5) is fully generic.</p>
+        <p><a href="#benchmark">→ Benchmark, Scoring Table</a></p>
+      </div>
+
+      <div class="hypothesis">
+        <p><span class="num">4</span><span class="if">If</span> Keystone keeps the pre-upload context questionnaire short (3–5 questions framed as "personalize your audit," Notion-style), <span class="then">then</span> drop-off before the first report is likely to be lower than if it resembles Amplitude's flow, <span class="because">because</span> Amplitude's 8-screen signup (email → name → team → role → company → password) is the heaviest pre-value flow among the seven onboarding-comparison products, while Notion's single segmentation question precedes immediate personalization.</p>
+        <p><a href="#competitors">→ Competitors, Onboarding Comparison table — Amplitude / Notion rows; "3 Differences" #3</a></p>
+      </div>
+
+      <div class="hypothesis">
+        <p><span class="num">5</span><span class="if">If</span> Keystone's report leads with the annotated screen-by-screen findings and treats the four scores as a secondary summary layer (not the headline), <span class="then">then</span> the report will satisfy both "quick read" and "what do I fix" needs, <span class="because">because</span> Patterns identifies #2 (annotated critique) as the only pattern that works with screenshot-only input and matches CLAUDE.md §7's spec, with #3 (scorecard) as a fitting complement but a poor primary mechanism on its own.</p>
+        <p><a href="#patterns">→ Patterns, "Chosen Pattern" section</a></p>
+      </div>
+
+      <h3>Known Gaps <span class="unverified">[?]</span></h3>
+      <ul>
+        <li><strong>Competitor screenshots not captured.</strong> Visual specifics of Notion/Linear/Stripe/Vercel/Userpilot/Appcues/Amplitude/PostHog onboarding flows are based on written teardowns only, not direct observation — blocked by the Playwright MCP Node version issue (<code>/usr/local/bin/node</code> v18.12.1 vs. required ≥18.17). <span class="unverified">[?]</span></li>
+        <li><strong>Five HARD/SOFT competitors have no sourced detail:</strong> Maze (AI Studio), Attention Insight, UXtweak, Hotjar/FullStory, UserTesting/Lyssna, freelance/agency audits, Google Lighthouse, Baymard Institute — listed in the Competitor Map by category/positioning only, with no specific factual claims yet verified. <span class="unverified">[?]</span></li>
+        <li><strong>Sample/demo report concept untested:</strong> would a pre-loaded example report help cold-start users the way Amplitude/PostHog use demo data, or is it unnecessary if the real report is fast enough (Hypothesis 1)? <span class="unverified">[?]</span></li>
+        <li><strong>Free-tier/monetization boundary undecided</strong> (CLAUDE.md §12 explicitly defers this). All seven onboarding-comparison competitors decouple monetization from activation — but Keystone's specific equivalent (e.g., audits-per-account before a paywall) has no hypothesis yet. <span class="unverified">[?]</span></li>
+        <li><strong>No usage data of any kind exists yet</strong> for Keystone itself — all hypotheses above are based on competitor/benchmark research, not on Keystone user behavior. Validating Hypotheses 1–5 requires building the MVP and observing real first-session behavior.</li>
+      </ul>
+    </section>
+
+    <!-- ===================== SCREENSHOTS ===================== -->
+    <section class="block" id="screenshots">
+      <div class="section-label">05 — Reference Screenshots</div>
+      <h2>Competitor Screens</h2>
+      <div class="screens-status">
+        <div class="badge">Not yet captured</div>
+        <p>
+          Capture via Playwright was attempted for Notion, Linear, Stripe, Vercel,
+          Userpilot, Appcues, Amplitude, and PostHog onboarding/signup screens, but
+          the Playwright MCP server resolves <code>node</code> to
+          <code>/usr/local/bin/node</code> (v18.12.1, missing <code>URL.canParse</code>,
+          added in Node 18.17+). Node 20.20.2 was installed via <code>nvm</code>, but
+          <code>/usr/local/bin/node</code> is a separate binary not managed by
+          <code>nvm</code>, so a session restart didn't fix it.
+        </p>
+        <p>
+          Fix requires <code>sudo ln -sf "$(nvm which 20)" /usr/local/bin/node</code>
+          (or reconfiguring the MCP server's node path) — skipped for now. See
+          <a href="screens/README.md">screens/README.md</a> for naming convention
+          once captured.
+        </p>
+      </div>
+      <!-- Once captured, drop images into research/screens/ and list them here, e.g.:
+      <div class="screens-grid">
+        <figure>
+          <img src="screens/notion-01-welcome-survey.png" alt="Notion welcome survey">
+          <figcaption>Notion — 01 — Welcome survey</figcaption>
+        </figure>
+      </div>
+      -->
+    </section>
+
+    <footer>
+      Compiled from <code>research/research.md</code> — Keystone Activation Audit, Setup → Aha → Habit framework.
+    </footer>
+  </main>
+</div>
+</body>
+</html>
