@@ -14,7 +14,7 @@ See [CLAUDE.md](./CLAUDE.md) for the full product brief.
 
 | Folder | Purpose | Status |
 | --- | --- | --- |
-| [`research/`](./research) | Research notes ([`research.md`](./research/research.md)) and reference [`screens/`](./research/screens) (competitor onboarding flows, inspiration) | In progress — competitor map added |
+| [`research/`](./research) | Research notes ([`research.md`](./research/research.md)) and reference [`screens/`](./research/screens) (competitor onboarding flows, inspiration) | In progress — competitor map + onboarding comparison added; screenshots [?] pending (needs Node 20 restart) |
 | [`concept/`](./concept) | Early concept exploration: visual direction, mood boards, naming, positioning | Empty |
 | [`wireframes/`](./wireframes) | Low/mid-fidelity wireframes for core flows (upload, questionnaire, report) | Empty |
 | [`tokens/`](./tokens) | Design tokens: color, type, spacing, radii, shadows | Empty |
