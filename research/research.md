@@ -161,3 +161,53 @@ This dimension is directly relevant to Keystone's MVP scope: "no login required 
 - [Login required after 3 questions (Perplexity Community)](https://community.perplexity.ai/t/login-required-after-3-questions-in-browser-no-chat-without-account/65)
 - [Getting Started with Perplexity](https://www.perplexity.ai/hub/getting-started)
 - [ChatGPT Plans | Free, Go, Plus, Pro, Business, and Enterprise](https://chatgpt.com/pricing/)
+
+## Surfacing Patterns: "Where Onboarding Loses People & Why"
+
+Core task: help a user/team understand where their onboarding loses people and why. Five fundamentally different UX patterns for surfacing this insight, evaluated for fit against Keystone's MVP.
+
+### 1. Quantitative Funnel / Drop-off Chart
+- **How it works:** Visualizes conversion rate at each defined step (stepped bar chart or funnel), highlighting the steps with the biggest % drop.
+- **Where it applies:** Products with instrumented event analytics (Amplitude, Mixpanel, PostHog funnels).
+- **When it fits:** Live product with real usage data across many users, prioritizing *which* step to fix based on volume of impact.
+- **When it breaks:** Tells you *where* (which step), not *why*. Useless without usage telemetry — pre-launch products or screenshot-only audits have no funnel to draw.
+
+### 2. Annotated Screen-by-Screen Critique (Expert/AI Teardown)
+- **How it works:** Walks through each screen in sequence, attaching findings (severity, description, impact, fix) directly to the screen/element where the issue occurs.
+- **Where it applies:** Design reviews, UX audit tools, AI teardown products (e.g., Maze AI Studio).
+- **When it fits:** Screenshots/mockups available but no usage data, wanting qualitative, evidence-tied reasoning about *why* something confuses users.
+- **When it breaks:** Doesn't quantify how many real users are affected or how severe the impact is in practice — relies on heuristic/expert judgment, which can feel subjective without supporting data.
+
+### 3. Scorecard / Benchmark Dashboard
+- **How it works:** Aggregates findings into a small number of scores (e.g., 0–100 or per-stage), often benchmarked against norms or best-in-class examples.
+- **Where it applies:** Google Lighthouse, "onboarding score" tools (Userpilot).
+- **When it fits:** Users want a fast, comparable, trackable metric — good for stakeholder reporting and tracking progress across re-audits.
+- **When it breaks:** A number alone oversimplifies — without drill-down it doesn't explain *why* or *what to fix*, and can feel like a grade rather than guidance.
+
+### 4. Attention/Heatmap Overlay (Predictive Visual Analysis)
+- **How it works:** An AI model predicts where users' eyes/attention land on a screen and overlays a heatmap of noticed vs. ignored elements.
+- **Where it applies:** Attention Insight, predictive eye-tracking tools — single static screens.
+- **When it fits:** The question is about visual hierarchy ("is the CTA noticed?") on one screen.
+- **When it breaks:** Doesn't capture multi-step flow issues or comprehension/motivation problems — purely visual attention, not "why users got confused" in a behavioral/framework sense.
+
+### 5. Session Replay / Behavioral Recording Timeline
+- **How it works:** Records real user sessions (video/DOM replay) with markers for rage-clicks, hesitation, and exits; the team scrubs real sessions to find friction.
+- **Where it applies:** Hotjar, FullStory — live products with real traffic.
+- **When it fits:** Live, instrumented product, wanting ground-truth behavioral evidence.
+- **When it breaks:** Requires live product + real users + privacy/compliance handling. Pre-launch or screenshot-only contexts can't use it at all, and reviewing recordings at scale is slow.
+
+### Fit Against CLAUDE.md
+
+**Best fit: #2 — Annotated Screen-by-Screen Critique**
+
+1. **Input constraint:** Keystone's MVP input is uploaded screenshots only (no live product/telemetry access per §5/§9) — of the five, this is the only pattern that works with zero usage data.
+2. **Already the spec:** §7's report structure (severity / description / impact / recommendation, mapped to specific screens) *is* this pattern — not an alternative to consider, but the one already chosen.
+3. **Audience fit:** §2's non-expert founders/PMs need concrete "why," tied to a screen they recognize — not raw funnel percentages or an attention heatmap they'd have to interpret themselves.
+
+**Second-best, under condition X: #3 — Scorecard/Dashboard**
+
+*Condition X = as a summary layer on top of #2, not as the primary mechanism.* §4 already specifies four scores (Setup/Aha/Habit/Overall) — this fits well when the user wants an at-a-glance status before drilling into findings, or wants to track progress across re-audits after making fixes. Alone, a score without explanation fails the "why" requirement — but layered over the annotated critique (exactly as CLAUDE.md combines them), it's the right complement.
+
+**Doesn't fit: #1 — Funnel/Drop-off Chart**
+
+It requires real usage/event telemetry across many users, which Keystone explicitly lacks by design — no automated capture, no product integration, screenshot-only (§5, §9 "out of scope"). Even the documented future direction (URL+login capture) would still be screenshot-based, not event-level data. This pattern measures *volume of impact across a user base*; Keystone measures the *quality/structure of the flow itself* — a different data requirement entirely, not just a missing feature. (#5 — session replay — fails for the same root reason.)
