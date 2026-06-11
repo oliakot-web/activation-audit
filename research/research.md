@@ -45,7 +45,7 @@ Three groups: HARD (same product/audience/market), SOFT (different product, same
 
 ## Onboarding Comparison: Setup → Aha → Habit
 
-> Source: web research / public UX teardowns (see Sources below). Screenshot capture via Playwright was attempted but blocked — the Playwright MCP server is running on Node 18.12.1, which lacks `URL.canParse` (added in Node 18.17). A newer Node (20.20.2) was installed via `nvm`, but the MCP server needs an app restart to pick it up. All screens below are marked **[?] not captured** pending that restart.
+> Source: web research / public UX teardowns (see Sources below). Screenshot capture via Playwright was attempted but blocked — the Playwright MCP server resolves `node` to `/usr/local/bin/node` (v18.12.1), which lacks `URL.canParse` (added in Node 18.17). A newer Node (20.20.2) was installed via `nvm`, and a session restart was tried, but `/usr/local/bin/node` is a separate, non-`nvm`-managed binary so the MCP server still fails. Fixing this requires a `sudo` symlink update or reconfiguring the MCP server's launch command — deferred for now. All screens below are marked **[?] not captured**, skipped for this pass.
 
 | Product | Audience | Core onboarding approach | Key activation mechanism | Trust-building | Monetization |
 |---|---|---|---|---|---|
@@ -94,3 +94,70 @@ Three groups: HARD (same product/audience/market), SOFT (different product, same
 - [Create a new account | Amplitude Docs](https://amplitude.com/docs/get-started/create-a-new-account)
 - [App onboarding: How to fix drop-off points (PostHog)](https://posthog.com/blog/how-to-find-and-fix-app-onboarding-drop-off)
 - [How we built our onboarding email flow (PostHog)](https://posthog.com/blog/how-we-built-email-onboarding)
+
+## Deep Dive: Clarity of the Aha Moment Before Signup Commitment
+
+This dimension is directly relevant to Keystone's MVP scope: "no login required to run an audit and view/export the report" only delivers on its promise if the report itself is a clear, legible Aha moment for an unauthenticated, first-time user.
+
+### Evaluation Criteria (1–5 scale)
+
+1. **Time-to-First-Value (TTFV)** — How quickly (clicks/seconds) does the user reach the core value, unauthenticated?
+2. **Account-Wall Placement** — How late and how generous is the signup prompt relative to the value delivered? (5 = no wall / very late, 1 = wall before any value)
+3. **Real vs. Sample Input** — Is the Aha generated from the user's *own* content/intent, or generic/sample data?
+4. **Explicit Value Framing** — Does the product label or narrate *why* this moment matters, or does it leave the user to infer the value themselves?
+5. **Personalization/Relevance** — Is the Aha tailored to a stated goal, or identical for every visitor?
+6. **Emotional Impact ("Wow" Factor)** — Does the moment feel surprising, delightful, or impressive in the first session?
+7. **Reversibility / Low-Stakes Exploration** — Can the user explore freely without fear of losing work, paying, or being locked in?
+8. **Clarity of Conversion Path** — After the Aha, is it obvious *what* signing up would add (vs. an abrupt, unexplained wall)?
+
+### Products Evaluated
+
+- **Duolingo** — language learning, mobile-first
+- **Replit** — browser-based coding/IDE
+- **Excalidraw** — collaborative whiteboard/diagramming
+- **Perplexity** — AI answer engine
+- **ChatGPT** — AI chat assistant
+
+### Scoring Table
+
+| Criterion | Duolingo | Replit | Excalidraw | Perplexity | ChatGPT |
+|---|---|---|---|---|---|
+| 1. Time-to-First-Value | 5 | 3 | 5 | 5 | 5 |
+| 2. Account-Wall Placement | 5 | 3 | 5 | 2 | 4 |
+| 3. Real vs. Sample Input | 3 | 5 | 5 | 5 | 5 |
+| 4. Explicit Value Framing | 4 | 2 | 2 | 4 | 3 |
+| 5. Personalization/Relevance | 4 | 2 | 1 | 5 | 5 |
+| 6. Emotional Impact ("Wow") | 4 | 3 | 2 | 4 | 5 |
+| 7. Reversibility / Low Stakes | 5 | 5 | 5 | 5 | 5 |
+| 8. Clarity of Conversion Path | 4 | 2 | 2 | 2 | 3 |
+| **Total (/40)** | **34** | **25** | **27** | **32** | **35** |
+
+### Notes per product
+
+- **Duolingo**: New users set a language/goal, then are dropped straight into a real, scored lesson — registration is optional and full daily learning remains usable unauthenticated. Personalization (language + stated goal) shapes the lesson, and gamified feedback (XP, streak) makes the value of *that specific session* legible. Weakest spot: lesson content itself is curriculum-driven, not deeply personalized beyond language/level.
+- **Replit**: You can write and run real code with zero account, and the "idea → working code in minutes" moment is its signature Aha. But there's almost no framing — a blank IDE doesn't tell a non-technical visitor what just happened or why it matters, and it's unclear what an account adds until you hit a feature wall.
+- **Excalidraw**: No account exists at all for the core product — the *fastest possible* TTFV and zero account-wall. But the blank canvas offers no framing, no personalization, and a fairly low "wow" — it assumes the user already knows why a whiteboard is valuable to them.
+- **Perplexity**: Delivers a fully real, personalized, well-framed answer (with citations as built-in "evidence of value") on the very first query — but the login wall arrives abruptly after ~3 questions, with little explanation of what an account unlocks, undercutting an otherwise excellent Aha.
+- **ChatGPT**: Highest "wow" — a real, personalized response to your own prompt, often surprising in quality on the first try, with a generous unauthenticated allowance. Framing is implicit (the answer speaks for itself) and the eventual signup prompt is reasonably clear (save history, more usage).
+
+### Top 3 Mechanisms to Bring Into Keystone's MVP
+
+1. **Run the full, real Aha unauthenticated — on the user's own input.** Like Duolingo/Perplexity/ChatGPT, Keystone should let a first-time visitor upload *their actual screenshots*, answer the context questions, and receive the *complete* Setup/Aha/Habit report with real scores and findings — no teaser/blurred version, no signup wall before value. This is already in CLAUDE.md scope (§8) and this research reinforces it as the single highest-leverage mechanism.
+2. **Frame the value explicitly, the way Perplexity's citations or Duolingo's XP/streak do.** A score and a list of findings aren't self-evidently valuable to a non-expert founder — Keystone should narrate *why* each score matters and visually anchor findings to the specific screen/moment they relate to (the "evidence" equivalent of a citation), so the report's value is legible without UX expertise.
+3. **Personalize the Aha using the upfront context answers**, the way Duolingo tailors the first lesson to the stated language/goal. Keystone's context questionnaire (product description, target user, Setup/Aha/Habit definitions) should visibly shape the report's language and recommendations — e.g., referencing the user's own stated "Aha moment" definition in the findings — so the report reads as *theirs*, not a generic template output.
+
+### 1 Mechanism That Won't Work
+
+**Excalidraw's "blank canvas, zero framing, zero personalization" approach.** Excalidraw works because its value (a drawing surface) is self-evident the instant you see it — no explanation needed. Keystone's value (a structured framework-based audit with scores) is *not* self-evident from an empty upload screen; dropping a first-time, non-UX-expert user straight into "upload your screenshots" with no framing of what they'll get back would score well on TTFV but fail criteria 4 and 5 (framing and personalization) — exactly the dimensions where Keystone's value most needs explaining. Some lightweight framing/context-setting before upload is necessary, even if kept minimal.
+
+### Sources (Deep Dive)
+- [Duolingo's delightful user onboarding experience (Appcues)](https://goodux.appcues.com/blog/duolingo-user-onboarding)
+- [Duolingo - an in-depth UX and user onboarding breakdown (UserGuiding)](https://userguiding.com/blog/duolingo-onboarding-ux)
+- [Gradual engagement: Why your mobile app's first screen should not be a signup (Appcues)](https://www.appcues.com/blog/gradual-engagement-mobile-app-first-screen)
+- [Replit homepage](https://replit.com/)
+- [Replit — reCAPTCHA and the anonymous experience](https://blog.replit.com/anon)
+- [Excalidraw: Free Online Whiteboard, No Login Required (DEV Community)](https://dev.to/nologintools/excalidraw-free-online-whiteboard-no-login-required-25j5)
+- [Excalidraw — How to start drawing](https://plus.excalidraw.com/how-to-start)
+- [Login required after 3 questions (Perplexity Community)](https://community.perplexity.ai/t/login-required-after-3-questions-in-browser-no-chat-without-account/65)
+- [Getting Started with Perplexity](https://www.perplexity.ai/hub/getting-started)
+- [ChatGPT Plans | Free, Go, Plus, Pro, Business, and Enterprise](https://chatgpt.com/pricing/)
