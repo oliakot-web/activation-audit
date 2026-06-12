@@ -355,6 +355,27 @@
     color: var(--text-muted);
   }
 
+  .screens-group {
+    margin-bottom: 28px;
+  }
+
+  .screens-group h4 {
+    margin: 0 0 12px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+
+  .screens-group .missing {
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--text-muted);
+    font-size: 13px;
+    margin: 0;
+  }
+
   code {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -558,11 +579,12 @@
 
       <h3>Onboarding Comparison: Setup → Aha → Habit</h3>
       <p class="lede">
-        Source: web research / public UX teardowns (see sources below). Screenshot
-        capture via Playwright was attempted but blocked by a Node version mismatch
-        on the MCP server — see the <a href="#screenshots">Screenshots</a> section.
-        All rows below are based on written teardowns, not direct visual capture
-        <span class="unverified">[?]</span>.
+        Source: web research / public UX teardowns (see sources below), now
+        supplemented with direct screenshots of marketing pages and public
+        signup screens — see the <a href="#screenshots">Screenshots</a> section.
+        Post-signup, logged-in onboarding steps remain based on written
+        teardowns only <span class="unverified">[?]</span>. Userpilot and Appcues
+        appear to be sales/demo-led with no public self-serve signup.
       </p>
       <div class="table-wrap">
         <table>
@@ -912,7 +934,7 @@
 
       <h3>Known Gaps <span class="unverified">[?]</span></h3>
       <ul>
-        <li><strong>Competitor screenshots not captured.</strong> Visual specifics of Notion/Linear/Stripe/Vercel/Userpilot/Appcues/Amplitude/PostHog onboarding flows are based on written teardowns only, not direct observation — blocked by the Playwright MCP Node version issue (<code>/usr/local/bin/node</code> v18.12.1 vs. required ≥18.17). <span class="unverified">[?]</span></li>
+        <li><strong>Competitor screenshots — partially resolved.</strong> Marketing pages and public/unauthenticated signup screens for Notion, Linear, Stripe, Vercel, Amplitude, and PostHog are now captured (see <a href="#screenshots">Screenshots</a>). Post-signup, logged-in onboarding steps remain based on written teardowns only. Userpilot and Appcues have no public self-serve signup (sales/demo-led); only their homepages were captured. <span class="unverified">[?]</span> for logged-in steps and Userpilot/Appcues onboarding flows.</li>
         <li><strong>Five HARD/SOFT competitors have no sourced detail:</strong> Maze (AI Studio), Attention Insight, UXtweak, Hotjar/FullStory, UserTesting/Lyssna, freelance/agency audits, Google Lighthouse, Baymard Institute — listed in the Competitor Map by category/positioning only, with no specific factual claims yet verified. <span class="unverified">[?]</span></li>
         <li><strong>Sample/demo report concept untested:</strong> would a pre-loaded example report help cold-start users the way Amplitude/PostHog use demo data, or is it unnecessary if the real report is fast enough (Hypothesis 1)? <span class="unverified">[?]</span></li>
         <li><strong>Free-tier/monetization boundary undecided</strong> (CLAUDE.md §12 explicitly defers this). All seven onboarding-comparison competitors decouple monetization from activation — but Keystone's specific equivalent (e.g., audits-per-account before a paywall) has no hypothesis yet. <span class="unverified">[?]</span></li>
@@ -924,32 +946,124 @@
     <section class="block" id="screenshots">
       <div class="section-label">05 — Reference Screenshots</div>
       <h2>Competitor Screens</h2>
-      <div class="screens-status">
-        <div class="badge">Not yet captured</div>
-        <p>
-          Capture via Playwright was attempted for Notion, Linear, Stripe, Vercel,
-          Userpilot, Appcues, Amplitude, and PostHog onboarding/signup screens, but
-          the Playwright MCP server resolves <code>node</code> to
-          <code>/usr/local/bin/node</code> (v18.12.1, missing <code>URL.canParse</code>,
-          added in Node 18.17+). Node 20.20.2 was installed via <code>nvm</code>, but
-          <code>/usr/local/bin/node</code> is a separate binary not managed by
-          <code>nvm</code>, so a session restart didn't fix it.
-        </p>
-        <p>
-          Fix requires <code>sudo ln -sf "$(nvm which 20)" /usr/local/bin/node</code>
-          (or reconfiguring the MCP server's node path) — skipped for now. See
-          <a href="screens/README.md">screens/README.md</a> for naming convention
-          once captured.
-        </p>
+      <p class="lede">
+        Captured via Playwright (1440×900, public/unauthenticated pages only).
+        Post-signup, logged-in onboarding steps are not captured and remain
+        <span class="unverified">[?]</span> — see
+        <a href="screens/README.md">screens/README.md</a> for the full list.
+      </p>
+
+      <div class="screens-group">
+        <h4>Notion</h4>
+        <div class="screens-grid">
+          <figure>
+            <img src="screens/notion-01-homepage.png" alt="Notion homepage">
+            <figcaption>01 — Homepage</figcaption>
+          </figure>
+          <figure>
+            <img src="screens/notion-02-signup.png" alt="Notion signup">
+            <figcaption>02 — Signup</figcaption>
+          </figure>
+        </div>
+        <p class="missing">Post-signup welcome survey / workspace setup — behind login wall <span class="unverified">[?]</span></p>
       </div>
-      <!-- Once captured, drop images into research/screens/ and list them here, e.g.:
-      <div class="screens-grid">
-        <figure>
-          <img src="screens/notion-01-welcome-survey.png" alt="Notion welcome survey">
-          <figcaption>Notion — 01 — Welcome survey</figcaption>
-        </figure>
+
+      <div class="screens-group">
+        <h4>Linear</h4>
+        <div class="screens-grid">
+          <figure>
+            <img src="screens/linear-01-homepage.png" alt="Linear homepage">
+            <figcaption>01 — Homepage</figcaption>
+          </figure>
+          <figure>
+            <img src="screens/linear-02-signup.png" alt="Linear signup">
+            <figcaption>02 — Signup ("Create your workspace")</figcaption>
+          </figure>
+        </div>
+        <p class="missing">Post-signup demo workspace / first-issue flow — behind login wall <span class="unverified">[?]</span></p>
       </div>
-      -->
+
+      <div class="screens-group">
+        <h4>Stripe</h4>
+        <div class="screens-grid">
+          <figure>
+            <img src="screens/stripe-01-homepage.png" alt="Stripe homepage">
+            <figcaption>01 — Homepage</figcaption>
+          </figure>
+          <figure>
+            <img src="screens/stripe-02-signup.png" alt="Stripe signup">
+            <figcaption>02 — Signup (dashboard.stripe.com/register)</figcaption>
+          </figure>
+        </div>
+        <p class="missing">Post-signup dashboard / API key setup — behind login wall <span class="unverified">[?]</span></p>
+      </div>
+
+      <div class="screens-group">
+        <h4>Vercel</h4>
+        <div class="screens-grid">
+          <figure>
+            <img src="screens/vercel-01-homepage.png" alt="Vercel homepage">
+            <figcaption>01 — Homepage</figcaption>
+          </figure>
+          <figure>
+            <img src="screens/vercel-02-signup.png" alt="Vercel signup">
+            <figcaption>02 — Signup ("Your first deploy is just a sign-up away")</figcaption>
+          </figure>
+        </div>
+        <p class="missing">Post-signup project import / first deploy flow — behind login wall <span class="unverified">[?]</span></p>
+      </div>
+
+      <div class="screens-group">
+        <h4>Userpilot</h4>
+        <div class="screens-grid">
+          <figure>
+            <img src="screens/userpilot-01-homepage.png" alt="Userpilot homepage">
+            <figcaption>01 — Homepage</figcaption>
+          </figure>
+        </div>
+        <p class="missing">No public self-serve signup found (<code>/book-a-demo/</code> returned 404) — appears sales/demo-led. Onboarding flow not captured <span class="unverified">[?]</span></p>
+      </div>
+
+      <div class="screens-group">
+        <h4>Appcues</h4>
+        <div class="screens-grid">
+          <figure>
+            <img src="screens/appcues-01-homepage.png" alt="Appcues homepage">
+            <figcaption>01 — Homepage</figcaption>
+          </figure>
+        </div>
+        <p class="missing">No public self-serve signup found (CTA is "Get a Demo") — appears sales/demo-led. Onboarding flow not captured <span class="unverified">[?]</span></p>
+      </div>
+
+      <div class="screens-group">
+        <h4>Amplitude</h4>
+        <div class="screens-grid">
+          <figure>
+            <img src="screens/amplitude-01-homepage.png" alt="Amplitude homepage">
+            <figcaption>01 — Homepage</figcaption>
+          </figure>
+          <figure>
+            <img src="screens/amplitude-02-signup.png" alt="Amplitude signup">
+            <figcaption>02 — Signup (untranslated i18n labels visible — likely a temporary localization bug)</figcaption>
+          </figure>
+        </div>
+        <p class="missing">Post-signup product tour / demo data exploration — behind login wall <span class="unverified">[?]</span></p>
+      </div>
+
+      <div class="screens-group">
+        <h4>PostHog</h4>
+        <div class="screens-grid">
+          <figure>
+            <img src="screens/posthog-01-homepage.png" alt="PostHog homepage">
+            <figcaption>01 — Homepage</figcaption>
+          </figure>
+          <figure>
+            <img src="screens/posthog-02-signup.png" alt="PostHog signup">
+            <figcaption>02 — Signup ("Get started")</figcaption>
+          </figure>
+        </div>
+        <p class="missing">Post-signup product selection / first insight flow — behind login wall <span class="unverified">[?]</span></p>
+      </div>
     </section>
 
     <footer>

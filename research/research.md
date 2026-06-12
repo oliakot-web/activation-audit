@@ -7,7 +7,7 @@ In progress — compiled into four sections: Competitors, Benchmark, Patterns, C
 
 ## Structure
 - `research.md` (this file) — research notes, findings, links, takeaways
-- `screens/` — reference screenshots (competitor onboarding flows, inspiration, examples) — **[?] not yet captured**, see [`screens/README.md`](./screens/README.md) for the Playwright/Node blocker
+- `screens/` — reference screenshots (competitor onboarding flows, inspiration, examples) — captured via Playwright, see [`screens/README.md`](./screens/README.md) for the per-product list and remaining `[?]` (login-walled) items
 
 ---
 
@@ -38,7 +38,9 @@ Three groups: HARD (same product/audience/market), SOFT (different product, same
 
 ### Onboarding Comparison: Setup → Aha → Habit
 
-> Source: web research / public UX teardowns (see Sources below). Screenshot capture via Playwright was attempted but blocked — the Playwright MCP server resolves `node` to `/usr/local/bin/node` (v18.12.1), which lacks `URL.canParse` (added in Node 18.17). A newer Node (20.20.2) was installed via `nvm`, and a session restart was tried, but `/usr/local/bin/node` is a separate, non-`nvm`-managed binary so the MCP server still fails. Fixing this requires a `sudo` symlink update or reconfiguring the MCP server's launch command — deferred for now. All screens below are marked **[?] not captured**, skipped for this pass.
+> Source: web research / public UX teardowns (see Sources below), now supplemented with direct screenshots captured via Playwright — see [`screens/`](./screens/) and [`screens/README.md`](./screens/README.md). Marketing pages and public/unauthenticated signup screens were captured for all eight products; post-signup, logged-in onboarding steps remain **[?]** (not captured) and are based on written teardowns only. Userpilot and Appcues appear to be sales/demo-led with no public self-serve signup — only their homepages were captured.
+>
+> Screens: Notion (`notion-01-homepage.png`, `notion-02-signup.png`) · Linear (`linear-01-homepage.png`, `linear-02-signup.png`) · Stripe (`stripe-01-homepage.png`, `stripe-02-signup.png`) · Vercel (`vercel-01-homepage.png`, `vercel-02-signup.png`) · Userpilot (`userpilot-01-homepage.png`, signup **[?]**) · Appcues (`appcues-01-homepage.png`, signup **[?]**) · Amplitude (`amplitude-01-homepage.png`, `amplitude-02-signup.png`) · PostHog (`posthog-01-homepage.png`, `posthog-02-signup.png`)
 
 | Product | Audience | Core onboarding approach | Key activation mechanism | Trust-building | Monetization |
 |---|---|---|---|---|---|
@@ -211,7 +213,7 @@ Gaps and hypotheses, framed as **if / then / because [data]**.
 
 ### Known Gaps ([?])
 
-- **Competitor screenshots not captured.** Visual specifics of Notion/Linear/Stripe/Vercel/Userpilot/Appcues/Amplitude/PostHog onboarding flows are based on written teardowns only, not direct observation — blocked by the Playwright MCP Node version issue (`/usr/local/bin/node` v18.12.1 vs. required ≥18.17). **[?]**
+- **Competitor screenshots — partially resolved.** Marketing pages and public/unauthenticated signup screens for Notion, Linear, Stripe, Vercel, Amplitude, and PostHog are now captured (see [`screens/`](./screens/)). Post-signup, logged-in onboarding steps (welcome surveys, demo workspaces, first-deploy/first-insight flows) remain based on written teardowns only — direct capture would require authenticated sessions. Userpilot and Appcues have no public self-serve signup (sales/demo-led); only their homepages were captured. **[?]** for logged-in steps and Userpilot/Appcues onboarding flows.
 - **Five HARD/SOFT competitors have no sourced detail**: Maze (AI Studio), Attention Insight, UXtweak, Hotjar/FullStory, UserTesting/Lyssna, freelance/agency audits, Google Lighthouse, Baymard Institute — listed in the Competitor Map by category/positioning only, with no specific factual claims yet verified. **[?]**
 - **Sample/demo report concept untested** (raised in earlier Open Questions): would a pre-loaded example report help cold-start users the way Amplitude/PostHog use demo data, or is it unnecessary if the real report is fast enough (Hypothesis 1)? **[?]**
 - **Free-tier/monetization boundary undecided** (CLAUDE.md §12 explicitly defers this). All seven onboarding-comparison competitors decouple monetization from activation — but Keystone's specific equivalent (e.g., audits-per-account before a paywall) has no hypothesis yet. **[?]**
